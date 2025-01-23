@@ -19,5 +19,7 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('video_app.urls'))
+    path('',include('video_app.urls')),
+    path('chat/', include('chat_app.urls')),
+    # path('ws/', include('websocket_app.urls')),  # Include WebSocket URL patterns
 ]

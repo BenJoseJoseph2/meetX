@@ -8,10 +8,10 @@ from django.urls import reverse
 
 
 def chat(request):
-    return render(request, 'webrtc_app/chat.html')
+    return render(request, 'chat_app/chat.html')
 
 def file_transfer(request):
-    return render(request, 'webrtc_app/file_transfer.html')
+    return render(request, 'chat_app/file_transfer.html')
 
 # mail system configuration
 
@@ -31,7 +31,7 @@ def create_room_and_send_email(request):
 
             if recipient_list:
                 room_id = generate_room_id()
-                room_link = request.build_absolute_uri(reverse('webrtc_app:room', args=[room_id]))
+                room_link = request.build_absolute_uri(reverse('chat_app:room', args=[room_id]))
 
                 subject = f'Your Meeting Room: {room_id}'
                 message = f'Click the following link to join your room: {room_link}'
@@ -47,10 +47,10 @@ def create_room_and_send_email(request):
 
         return JsonResponse({"success": False, "message": "Recipient email(s) are required"})
 
-    return render(request, 'webrtc_app/create_room.html')  # Render the form
+    return render(request, 'chat_app/create_room.html')  # Render the form
 
 # webrtc_app/views.py (add this)
 
 def room(request, room_id):
     # This is just a placeholder for when the room link is clicked
-    return render(request, 'webrtc_app/room.html', {'room_id': room_id})
+    return render(request, 'chat_app/room.html', {'room_id': room_id})

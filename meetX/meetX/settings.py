@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-3qqszmmidmo&%4n9#q%gj)&jli^_@iu8n(9tx)$)76vkqga=ba
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['17a5-103-157-104-107.ngrok-free.app',
-]
+ALLOWED_HOSTS = ['17a5-103-157-104-107.ngrok-free.app','127.0.0.1',]
 
 
 # Application definition
@@ -39,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    'video_app'
+    'video_app',
+    'chat_app',
 ]
 
 MIDDLEWARE = [
@@ -126,9 +126,35 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_URL = 'staticfiles/'
+
+
+import os 
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    BASE_DIR / "staticfile",  # Global static directory if you have one
+    BASE_DIR / "webrtc_app/static",  # Static directory within the app
+]
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# mail system configuration 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # or any other SMTP server you're using
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'vigneshchinthakuntla4666@gmail.com'  # replace with your email
+EMAIL_HOST_PASSWORD = 'wecq odqy ztzt ltca'  # replace with your app password

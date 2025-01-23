@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WebRTC Chat</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 90%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        #chat-log {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 8px;
+            background-color: #e3f2fd;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background-color: #ffecb3;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media screen and (max-width: 768px) {
+            .chat-container {
+                padding: 15px;
+                max-width: 100%;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+    <style>
+        /* Emoji container styling */
+        #emoji-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;  /* Allows wrapping on smaller screens */
+        }
+
+        .emoji-btn {
+            background-color: transparent;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            padding: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .emoji-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            #emoji-container {
+                /* flex-direction: row;   */
+                /* Ensures emojis are in a row */
+                justify-content: space-between; /* Adds space between emojis */
+                padding: 10px;
+            }
+
+            .emoji-btn {
+                flex: 1 1 20%; /* Make each button take equal space */
+                text-align: center; /* Centers text inside button */
+                font-size: 25px; /* Slightly larger on mobile */
+            }
+        }
+
+        @media (max-width: 400px) {
+            .emoji-btn {
+                font-size: 22px; /* Adjust font size further on very small screens */
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="chat-container">
+        <h2>WebRTC Chat</h2>
+        <div id="chat-log"></div>
+
+        <div id="emoji-container">
+            <button class="emoji-btn" data-emoji="👍">👍</button>
+            <button class="emoji-btn" data-emoji="👏">👏</button>
+            <button class="emoji-btn" data-emoji="👎">👎</button>
+            <button class="emoji-btn" data-emoji="🤚">🤚</button>
+            <button class="emoji-btn" data-emoji="🎉">🎉</button>
+        </div>
+
+
+        <input id="chat-message-input" type="text" placeholder="Type your message">
+        <button id="chat-message-send">Send</button>
+        <!-- <input type="file" id="file-input" />
+        <button id="file-send-btn">Send File</button>
+        <div id="file-messages"></div> -->
+
+        <div id="file-transfer-container"></div>
+
+
+    </div>
+
+
+    <script>
+        let chatSocket;
+
+        function connectWebSocket() {
+            chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+            chatSocket.onopen = function () {
+                console.log("WebSocket connection established.");
+            };
+
+            chatSocket.onclose = function (e) {
+                console.error("WebSocket closed unexpectedly. Attempting to reconnect...");
+                setTimeout(connectWebSocket, 1000); // Retry connection after 1 second
+            };
+
+            chatSocket.onerror = function (e) {
+                console.error("WebSocket error: ", e);
+            };
+
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                const chatLog = document.querySelector('#chat-log');
+                chatLog.innerHTML += `<p class="message">${data.message}</p>`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            };
+        }
+
+        connectWebSocket();
+
+        document.querySelector('#chat-message-send').onclick = function () {
+            if (chatSocket.readyState === WebSocket.OPEN) {
+                const message = document.querySelector('#chat-message-input').value;
+                chatSocket.send(JSON.stringify({ 'message': message }));
+                document.querySelector('#chat-message-input').value = '';
+            } else {
+                console.error("WebSocket is not open. Current state: ", chatSocket.readyState);
+            }
+        };
+
+        // Emoji buttons click event
+        const emojiButtons = document.querySelectorAll('.emoji-btn');
+        emojiButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const emoji = button.getAttribute('data-emoji');
+                const messageInput = document.querySelector('#chat-message-input');
+                messageInput.value += emoji;  // Append emoji to message input field
+            });
+        });
+
+
+        // Load file transfer functionality
+        fetch('/file_transfer.html')
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('#file-transfer-container').innerHTML = html;
+
+                // Initialize file transfer functionality
+                const script = document.createElement('script');
+                script.src = '/static/js/file_transfer.js'; // Include file transfer script
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error("Failed to load file transfer: ", err));
+    </script>
+
+
+    <!-- <script>
+        let chatSocket;
+
+        function connectWebSocket() {
+            chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+            chatSocket.onopen = function () {
+                console.log("WebSocket connection established.");
+            };
+
+            chatSocket.onclose = function (e) {
+                console.error("WebSocket closed unexpectedly. Attempting to reconnect...");
+                setTimeout(connectWebSocket, 1000);  // Retry connection after 1 second
+            };
+
+            chatSocket.onerror = function (e) {
+                console.error("WebSocket error: ", e);
+            };
+
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                const chatLog = document.querySelector('#chat-log');
+
+                if (data.file_action === 'sent') {
+                    chatLog.innerHTML += `<p class="message user">${data.message}</p>`;
+                } else if (data.file_action === 'receive') {
+                    chatLog.innerHTML += `
+                        <div class="file-message download">
+                            <p>${data.message}</p>
+                            <a href="${data.file_data}" download="${data.file_name}">Download File</a>
+                        </div>
+                    `;
+                } else {
+                    chatLog.innerHTML += `<p class="message">${data.message}</p>`;
+                }
+
+                chatLog.scrollTop = chatLog.scrollHeight;
+            };
+        }
+
+        connectWebSocket();  // Initiate WebSocket connection on page load
+
+        document.querySelector('#chat-message-send').onclick = function (e) {
+            if (chatSocket.readyState === WebSocket.OPEN) {
+                const message = document.querySelector('#chat-message-input').value;
+                chatSocket.send(JSON.stringify({ 'message': message }));
+                document.querySelector('#chat-message-input').value = '';
+            } else {
+                console.error("WebSocket is not open. Current state: ", chatSocket.readyState);
+            }
+        };
+
+        document.querySelector('#file-send-btn').onclick = function () {
+            const fileInput = document.querySelector('#file-input');
+            if (fileInput.files.length > 0 && chatSocket.readyState === WebSocket.OPEN) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                // reader.onload = function () {
+                //     const fileData = reader.result;
+                //     chatSocket.send(JSON.stringify({
+                //         'file_name': file.name,
+                //         'file_data': fileData
+                //     }));
+                //     document.querySelector('#file-input').value = '';  // Clear the input
+                // };
+
+                reader.onload = () => {
+                    const fileData = reader.result.split(',')[1]; // Extract Base64 content
+                    const payload = {
+                        file_name: file.name,
+                        file_data: fileData,
+                    };
+                    chatSocket.send(JSON.stringify(payload));
+                };
+
+                reader.readAsDataURL(file);  // Convert file to base64
+            }
+        };
+
+        // const chatSocket = new WebSocket('ws://127.0.0.1:8000/ws/file_transfer/');
+
+        const fileInput = document.getElementById('file-input');
+        const sendButton = document.getElementById('send-button');
+        const fileMessages = document.getElementById('file-messages');
+
+        sendButton.addEventListener('click', () => {
+            const file = fileInput.files[0]; // Get the first selected file
+            if (file) {
+                const reader = new FileReader();
+
+                // Read the file as Base64
+                reader.onload = () => {
+                    const fileData = reader.result.split(',')[1]; // Extract Base64 content
+                    const payload = {
+                        file_name: file.name,
+                        file_data: fileData,
+                    };
+
+                    // Send the payload to the WebSocket
+                    chatSocket.send(JSON.stringify(payload));
+                };
+
+                reader.readAsDataURL(file); // Read the file data
+            } else {
+                console.error('No file selected.');
+            }
+        });
+
+        chatSocket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+
+            if (data.file_action === 'receive') {
+                // Display the file download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = `data:application/octet-stream;base64,${data.file_data}`;
+                downloadLink.download = data.file_name;
+                downloadLink.textContent = `Download ${data.file_name}`;
+                fileMessages.appendChild(downloadLink);
+                fileMessages.appendChild(document.createElement('br'));
+            } else if (data.file_action === 'sent') {
+                const confirmation = document.createElement('p');
+                confirmation.textContent = data.message; // File sent message
+                fileMessages.appendChild(confirmation);
+            } else if (data.error) {
+                console.error(data.error); // Display error messages
+            }
+        };
+
+        chatSocket.onopen = function () {
+            console.log("WebSocket connection established.");
+        };
+
+        chatSocket.onclose = function () {
+            console.log("WebSocket connection closed.");
+        };
+
+
+    </script> -->
+</body>
+
+</html>

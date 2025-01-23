@@ -29,6 +29,7 @@ ALLOWED_HOSTS = ['17a5-103-157-104-107.ngrok-free.app',
 ]
 
 
+
 # Application definition
 
 INSTALLED_APPS = [

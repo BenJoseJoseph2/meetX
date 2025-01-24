@@ -1,9 +1,26 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+</head>
+<body>
+    <h2>Register</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+</body>
+</html> -->
+
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Register</title>
     <style>
-        /* General styling */
+        /* General Styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -42,7 +59,8 @@
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],
+        input[type="email"] {
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -65,12 +83,6 @@
             background-color: #45a049;
         }
 
-        .error-message {
-            font-size: 12px;
-            color: red;
-            display: none; /* Hidden by default */
-        }
-
         p {
             text-align: center;
             margin-top: 15px;
@@ -87,7 +99,7 @@
             color: #0056b3;
         }
 
-        /* Responsive design */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -112,69 +124,29 @@
 <body>
     <div class="container">
         <h2>Register</h2>
-        <form method="post" id="register-form">
+        <form method="post">
             {% csrf_token %}
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username">
-            <p class="error-message" id="username-error">Username must be 150 characters or fewer. Letters, digits, and @/./+/-/_ only.</p>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password">
-            <p class="error-message" id="password-error">Password must contain at least 8 characters and cannot be entirely numeric or too similar to personal information.</p>
-
-            <label for="password2">Password confirmation:</label>
-            <input type="password" id="password2" name="password2">
-            <p class="error-message" id="password2-error">Passwords do not match. Please try again.</p>
-
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <small style="color: red;">{{ field.errors|join:", " }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
             <button type="submit">Register</button>
         </form>
         <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
     </div>
-
-    <script>
-        document.getElementById('register-form').addEventListener('submit', function (event) {
-            let valid = true;
-
-            // Username validation
-            const username = document.getElementById('username').value;
-            const usernameError = document.getElementById('username-error');
-            const usernameRegex = /^[\w.@+-]{1,150}$/;
-
-            if (!usernameRegex.test(username)) {
-                usernameError.style.display = 'block'; // Show error message
-                valid = false;
-            } else {
-                usernameError.style.display = 'none'; // Hide error message
-            }
-
-            // Password validation
-            const password = document.getElementById('password').value;
-            const passwordError = document.getElementById('password-error');
-            if (
-                password.length < 8 ||
-                /^\d+$/.test(password) // Entirely numeric
-            ) {
-                passwordError.style.display = 'block'; // Show error message
-                valid = false;
-            } else {
-                passwordError.style.display = 'none'; // Hide error message
-            }
-
-            // Password confirmation validation
-            const password2 = document.getElementById('password2').value;
-            const password2Error = document.getElementById('password2-error');
-            if (password !== password2) {
-                password2Error.style.display = 'block'; // Show error message
-                valid = false;
-            } else {
-                password2Error.style.display = 'none'; // Hide error message
-            }
-
-            // Prevent form submission if validation fails
-            if (!valid) {
-                event.preventDefault();
-            }
-        });
-    </script>
 </body>
 </html>
+
+
+{% if form.errors %}
+    <ul>
+        {% for field, errors in form.errors.items %}
+            <li>{{ field }}: {{ errors|join:", " }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

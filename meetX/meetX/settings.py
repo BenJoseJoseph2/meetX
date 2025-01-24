@@ -28,7 +28,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
 '17a5-103-157-104-107.ngrok-free.app',
 '7d78-103-157-104-107.ngrok-free.app',
-'127.0.0.1'
+'127.0.0.1',
+ 'https://f4b4-103-157-104-107.ngrok-free.app',
+]
+CSRF_TRUSTED_ORIGINS = [
+    'https://f4b4-103-157-104-107.ngrok-free.app',
 ]
 
 

@@ -155,6 +155,11 @@
             <button id="toggleCamera">Toggle Camera</button>
             <button id="toggleMic">Toggle Mic</button>
             <button id="startScreenShare">Share Screen</button>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        
         </div>
     </header>
 

@@ -15,8 +15,8 @@ from django.contrib.auth.decorators import login_required
 
 
 
-# def video_chat(request):
-#     return render(request, '/home/wac/Downloads/meetxproject/meetX/video_app/templates/video_app/video_chat.html')
+def video_chat(request):
+    return render(request, '/home/wac/video_conf/meetX/video_app/templates/video_app/video_chat.html')
 
 
 def chat(request):

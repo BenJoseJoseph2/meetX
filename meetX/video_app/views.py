@@ -12,7 +12,7 @@ from django.conf import settings
 
 
 def video_chat(request):
-    return render(request, '/home/wac/Downloads/meetxproject/meetX/video_app/templates/video_app/video_chat.html')
+    return render(request, '/home/wac/video_conf/meetX/video_app/templates/video_app/video_chat.html')
 
 
 def chat(request):

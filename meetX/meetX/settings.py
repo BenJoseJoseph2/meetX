@@ -162,3 +162,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'vigneshchinthakuntla4666@gmail.com'  # replace with your email
 EMAIL_HOST_PASSWORD = 'wecq odqy ztzt ltca'  # replace with your app password
+
+LOGIN_REDIRECT_URL = 'video_chat'
+LOGOUT_REDIRECT_URL = 'login'

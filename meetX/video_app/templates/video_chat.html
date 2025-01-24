@@ -1,106 +1,195 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Call App with Chat & Screen Share</title>
+    <title>MEETX - Video Conferencing</title>
     <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #282c34;
+            color: white;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #1c1c1e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #2a9d8f;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+            height: calc(100vh - 60px);
+        }
+
+        #videoSection {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
             padding: 20px;
+            background-color: #333;
         }
 
-        h1 {
-            margin-bottom: 40px;
+        #videoSection video {
+            width: 350px;
+            height: 200px;
+            border: 3px solid #444;
+            border-radius: 10px;
+            background-color: black;
         }
 
-        #videoContainer video {
-            width: 320px;
-            height: 240px;
-            margin: 10px;
-            border-radius: 15px;
-            border: 2px solid #34495e;
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         #controls button {
-            margin: 8px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            background-color: #3498db;
+            padding: 10px 15px;
+            font-size: 14px;
             color: white;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
         #controls button:hover {
-            background-color: #2980b9;
+            background-color: #21867a;
         }
 
-        #chatContainer {
-            margin-top: 20px;
-            max-width: 500px;
-            margin: auto;
+        #sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #1c1c1e;
+            border-left: 2px solid #444;
         }
 
-        #messages {
-            max-height: 250px;
+        #roomActions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #roomActions input {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #282c34;
+            color: white;
+        }
+
+        #roomActions button {
+            padding: 10px 15px;
+            font-size: 14px;
+            color: white;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #roomActions button:hover {
+            background-color: #21867a;
+        }
+
+        #chatSection {
+            flex: 1;
             overflow-y: auto;
-            background-color: #34495e;
-            padding: 12px;
-            border-radius: 8px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
         }
 
-        #messages div {
+        #chatSection div {
             margin: 5px 0;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 5px;
         }
 
         .sent {
-            background-color: #2ecc71;
+            background-color: #2a9d8f;
             text-align: right;
         }
 
         .received {
-            background-color: #e74c3c;
+            background-color: #e76f51;
             text-align: left;
+        }
+
+        #fileSection {
+            margin-top: 10px;
+        }
+
+        #fileSection input,
+        #fileSection button {
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <h1>ConnectX</h1>
+    <header>
+        <h1>MEETX</h1>
+        <div>
+            <button id="toggleCamera">Toggle Camera</button>
+            <button id="toggleMic">Toggle Mic</button>
+            <button id="startScreenShare">Share Screen</button>
+        </div>
+    </header>
 
-    <div>
-        <button id="createRoom">Create Room</button>
-        <input id="roomInput" type="text" placeholder="Enter Room ID" />
-        <button id="joinRoom">Join Room</button>
-    </div>
+    <main>
+        <section id="videoSection">
+            <div>
+                <video id="localVideo" autoplay muted></video>
+                <video id="remoteVideo" autoplay></video>
+            </div>
+        </section>
 
-    <div id="videoContainer">
-        <video id="localVideo" autoplay muted></video>
-        <video id="remoteVideo" autoplay></video>
-    </div>
+        <aside id="sidebar">
+            <div id="roomActions">
+                <button id="createRoom">Create Room</button>
+                <input id="roomInput" type="text" placeholder="Enter Room ID" />
+                <button id="joinRoom">Join Room</button>
+            </div>
 
-    <div id="controls">
-        <button id="toggleCamera">Turn On Camera</button>
-        <button id="toggleMic">Turn On Mic</button>
-        <button id="startScreenShare">Share Screen</button>
-    </div>
+            <div id="chatSection">
+                <h3>Chat</h3>
+                <div id="messages"></div>
+                <input id="chatInput" type="text" placeholder="Type a message..." />
+                <button id="sendMessage">Send</button>
+            </div>
 
-    <div id="chatContainer">
-        <div id="messages"></div>
-        <input id="chatInput" type="text" placeholder="Type a message..." />
-        <button id="sendMessage">Send</button>
-    </div>
+            <div id="fileSection">
+                <h3>File Sharing</h3>
+                <input type="file" id="fileInput" />
+                <button id="sendFile">Send File</button>
+            </div>
+        </aside>
+    </main>
 
     <script>
-        const peer = new Peer();
+        const peer = new Peer(); // Initialize PeerJS
         let localStream = null;
         let remoteStream = null;
         let currentCall = null;
@@ -118,10 +207,13 @@
         const chatInput = document.getElementById('chatInput');
         const sendMessageButton = document.getElementById('sendMessage');
         const messagesDiv = document.getElementById('messages');
+        const fileInput = document.getElementById('fileInput');
+        const sendFileButton = document.getElementById('sendFile');
 
         let isCameraOn = true;
         let isMicOn = true;
 
+        // Get local media
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
             .then((stream) => {
@@ -130,11 +222,13 @@
             })
             .catch((err) => console.error('Failed to get local stream', err));
 
+        // Create a new room
         createRoomButton.addEventListener('click', () => {
             const roomId = peer.id;
             alert(`Room created! Share this Room ID: ${roomId}`);
         });
 
+        // Join an existing room
         joinRoomButton.addEventListener('click', () => {
             const roomId = roomInput.value.trim();
             if (!roomId) {
@@ -142,51 +236,141 @@
                 return;
             }
 
-            dataConnection = peer.connect(roomId);  
-            setupChat();
+            // Connect for chat and file sharing
+            dataConnection = peer.connect(roomId);
+            setupDataConnection();
 
+            // Make a call with local stream
             const call = peer.call(roomId, localStream);
             handleCall(call);
         });
 
+        // Listen for incoming connections
         peer.on('connection', (conn) => {
             dataConnection = conn;
-            setupChat();
+            setupDataConnection();
         });
 
+        // Handle incoming calls
         peer.on('call', (call) => {
-            call.answer(localStream);
+            call.answer(localStream); // Answer with local stream
             handleCall(call);
         });
 
+        // Setup chat and file sharing
+        function setupDataConnection() {
+            if (!dataConnection) return;
+
+            dataConnection.on('data', (data) => {
+                if (data.type === 'message') {
+                    appendMessage(data.content, 'received');
+                } else if (data.type === 'file') {
+                    receiveFile(data.file, data.filename);
+                }
+            });
+
+            dataConnection.on('open', () => {
+                console.log('Data connection established');
+            });
+
+            dataConnection.on('close', () => {
+                console.log('Data connection closed');
+            });
+        }
+
+        // Chat functionality
         sendMessageButton.addEventListener('click', () => {
             const message = chatInput.value.trim();
             if (message && dataConnection) {
-                dataConnection.send(message);
+                dataConnection.send({ type: 'message', content: message });
                 appendMessage(message, 'sent');
                 chatInput.value = '';
             }
         });
-
-        function setupChat() {
-            if (!dataConnection) return;
-
-            dataConnection.on('data', (message) => {
-                appendMessage(message, 'received');
-            });
-
-            dataConnection.on('open', () => console.log('Chat connection established'));
-            dataConnection.on('close', () => console.log('Chat connection closed'));
-        }
 
         function appendMessage(message, type) {
             const messageDiv = document.createElement('div');
             messageDiv.textContent = message;
             messageDiv.className = type;
             messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll
         }
 
+        // File sharing functionality
+        sendFileButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (file && dataConnection) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    dataConnection.send({
+                        type: 'file',
+                        file: reader.result,
+                        filename: file.name,
+                    });
+                    alert('File sent!');
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        function receiveFile(file, filename) {
+            const blob = new Blob([file]);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.textContent = `Download ${filename}`;
+            a.style.color = 'white';
+            messagesDiv.appendChild(a);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll
+        }
+
+        // Toggle camera
+        toggleCameraButton.addEventListener('click', () => {
+            const videoTrack = localStream.getVideoTracks()[0];
+            isCameraOn = !isCameraOn;
+            videoTrack.enabled = isCameraOn;
+            toggleCameraButton.textContent = isCameraOn ? 'Turn Camera Off' : 'Turn Camera On';
+        });
+
+        // Toggle microphone
+        toggleMicButton.addEventListener('click', () => {
+            const audioTrack = localStream.getAudioTracks()[0];
+            isMicOn = !isMicOn;
+            audioTrack.enabled = isMicOn;
+            toggleMicButton.textContent = isMicOn ? 'Mute' : 'Unmute';
+        });
+
+        // Start screen sharing
+        startScreenShareButton.addEventListener('click', async () => {
+            try {
+                screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const screenTrack = screenStream.getVideoTracks()[0];
+
+                // Replace the video track in the call
+                if (currentCall) {
+                    const sender = currentCall.peerConnection
+                        .getSenders()
+                        .find((s) => s.track.kind === 'video');
+                    sender.replaceTrack(screenTrack);
+                }
+
+                screenTrack.onended = () => {
+                    // Revert to local camera when screen sharing ends
+                    const videoTrack = localStream.getVideoTracks()[0];
+                    if (currentCall) {
+                        const sender = currentCall.peerConnection
+                            .getSenders()
+                            .find((s) => s.track.kind === 'video');
+                        sender.replaceTrack(videoTrack);
+                    }
+                };
+            } catch (err) {
+                console.error('Failed to share screen', err);
+            }
+        });
+
+        // Handle video call
         function handleCall(call) {
             currentCall = call;
 
@@ -196,55 +380,10 @@
             });
 
             call.on('close', () => {
-                remoteVideo.srcObject = null;
                 console.log('Call ended');
+                remoteVideo.srcObject = null;
             });
         }
-
-        startScreenShareButton.addEventListener('click', async () => {
-            if (!screenStream) {
-                try {
-                    screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-                    const screenTrack = screenStream.getVideoTracks()[0];
-
-                    if (currentCall && currentCall.peerConnection) {
-                        const sender = currentCall.peerConnection
-                            .getSenders()
-                            .find((s) => s.track.kind === 'video');
-                        if (sender) sender.replaceTrack(screenTrack);
-                    }
-
-                    screenTrack.onended = () => {
-                        if (localStream) {
-                            const cameraTrack = localStream.getVideoTracks()[0];
-                            if (currentCall && currentCall.peerConnection) {
-                                const sender = currentCall.peerConnection
-                                    .getSenders()
-                                    .find((s) => s.track.kind === 'video');
-                                if (sender) sender.replaceTrack(cameraTrack);
-                            }
-                        }
-                        screenStream = null;
-                    };
-                } catch (err) {
-                    console.error('Error starting screen sharing:', err);
-                }
-            }
-        });
-
-        toggleCameraButton.addEventListener('click', () => {
-            isCameraOn = !isCameraOn;
-            localStream.getVideoTracks()[0].enabled = isCameraOn;
-            toggleCameraButton.textContent = isCameraOn ? 'Turn Off Camera' : 'Turn On Camera';
-        });
-
-        toggleMicButton.addEventListener('click', () => {
-            isMicOn = !isMicOn;
-            localStream.getAudioTracks()[0].enabled = isMicOn;
-            toggleMicButton.textContent = isMicOn ? 'Turn Off Mic' : 'Turn On Mic';
-        });
-
-        peer.on('open', () => console.log(`Peer connected with ID: ${peer.id}`));
     </script>
 </body>
 </html>

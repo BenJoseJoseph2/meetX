@@ -148,69 +148,128 @@
         #fileSection button {
             margin: 5px 0;
         }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>MEETX</h1>
-        <div>
-            <button id="toggleCamera">Toggle Camera</button>
-            <button id="toggleMic">Toggle Mic</button>
-            <button id="startScreenShare">Share Screen</button>
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-        
-        </div>
-    </header>
 
-    <main>
-        <section id="videoSection">
-            <div>
-                <video id="localVideo" autoplay muted></video>
-                <video id="remoteVideo" autoplay></video>
-            </div>
-        </section>
+        .controlButton {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: white;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        .controlButton:hover {
+            background-color: #21867a;
+        }
+    
+        /* Video Section Styling */
+        #videoContainer {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+    
+        #videoSection video {
+            width: 350px;
+            height: 200px;
+            border: 3px solid #444;
+            border-radius: 10px;
+            background-color: black;
+        }
+    
+        #videoControls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+    
+        /* Chat Section Styling */
+        #chatSection {
+            background-color: #1c1c1e;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+        }
+    
+        #messages div {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            color: white;
+        }
+    
+        .sent {
+            background-color: #2a9d8f;
+            text-align: right;
+        }
+    
+        .received {
+            background-color: #e76f51;
+            text-align: left;
+        }
+    
+        #chatInput {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
 
-        <aside id="sidebar">
-            <div id="roomActions">
-                <button id="createRoom">Create Room</button>
-                <input id="roomInput" type="text" placeholder="Enter Room ID" />
-                <button id="joinRoom">Join Room</button>
-            </div>
-
-            <div id="chatSection">
-                <h3>Chat</h3>
-                <div id="messages"></div>
-                <input id="chatInput" type="text" placeholder="Type a message..." />
-                <button id="sendMessage">Send</button>
-            </div>
-
-            <div id="fileSection">
-                <h3>File Sharing</h3>
-                <input type="file" id="fileInput" />
-                <button id="sendFile">Send File</button>
-            </div>
-        </aside>
-
-        <!-- mail feature  -->
-        <!-- Popup Modal -->
-        <div id="roomModal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <h3>Room Created</h3>
-                <p>Room ID: <span id="roomIdDisplay"></span></p>
-                <button id="shareToMail">Share to Mail</button>
-                <div id="emailForm" style="display: none;">
-                    <input type="email" id="emailInput" placeholder="Enter recipient email" />
-                    <button id="sendMailButton">Send Mail</button>
-                </div>
-                <button id="closeModal">OK</button>
-            </div>
-        </div>
-        
-        <!-- Add basic styles for the modal -->
         <style>
+            /* File Sharing Section */
+            #fileSection {
+                margin-top: 20px;
+                background-color: #1c1c1e;
+                border: 2px solid #444;
+                border-radius: 10px;
+                padding: 15px;
+            }
+        
+            #fileSection h3 {
+                margin-bottom: 10px;
+                color: #2a9d8f;
+            }
+        
+            #fileSection input[type="file"] {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                color: white;
+                background-color: #282c34;
+                border: 1px solid #444;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+        
+            #fileSection input[type="file"]:hover {
+                background-color: #333;
+            }
+        
+            #fileSection button {
+                padding: 10px;
+                font-size: 14px;
+                color: white;
+                background-color: #2a9d8f;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+        
+            #fileSection button:hover {
+                background-color: #21867a;
+            }
+        
+            /* Adjusting alignment for content */
+            #fileSection div {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
             .modal {
                 position: fixed;
                 top: 0;
@@ -241,12 +300,83 @@
             }
         </style>
         
-        <!-- mail feature  -->
+    </style>
+</head>
+<body>
+  
+    <header>
+        <h1>MEETX</h1>
+        <div id="headerControls" style="display: flex; gap: 10px;">
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="background-color:rgb(66, 190, 132);height:30px;border-radius:50px;width:80px">Logout</button>
+            </form>
+        </div>
+    </header>
 
+    <main>
+
+        <section id="videoSection">
+            <div id="videoContainer" style="display: flex; gap: 20px;">
+                <video id="localVideo" autoplay muted></video>
+                <video id="remoteVideo" autoplay></video>
+            </div>
+            <div id="videoControls" style="margin-top: 20px; display: flex; gap: 15px;">
+                <button class="controlButton" id="toggleCamera">Toggle Camera</button>
+                <button class="controlButton" id="toggleMic">Toggle Mic</button>
+                <button class="controlButton" id="startScreenShare">Share Screen</button>
+            </div>
+        </section>
+        
+        <aside id="sidebar">
+            <div id="roomActions">
+                <h3>Room Actions</h3>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                    <button id="createRoom">Create Room</button>
+                    <input id="roomInput" type="text" placeholder="Enter Room ID" />
+                    <button id="joinRoom">Join Room</button>
+                </div>
+            </div>
+        
+
+            <div id="chatSection">
+                <h3 style="text-align: center; color: #2a9d8f;">Chat</h3>
+                <div id="messages" style="height: 300px; overflow-y: auto; background-color: #222; border-radius: 8px; padding: 10px; border: 1px solid #444;">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div style="display: flex; margin-top: 10px; gap: 10px;">
+                    <input id="chatInput" type="text" placeholder="Type a message..." style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background-color: #282c34; color: white;" />
+                    <button id="sendMessage" class="controlButton">Send</button>
+                </div>
+            </div>
+            
+            <div id="fileSection">
+                <h3 style="text-align: center; color: #2a9d8f;">File Sharing</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; background-color: #222; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                    <input type="file" id="fileInput" style="background-color: #282c34; color: white; padding: 10px; border-radius: 5px; border: 1px solid #444;" />
+                    <button id="sendFile" class="controlButton" style="width: 100%;">Send File</button>
+                </div>
+            </div>
+            
+        </aside>
+        
+        <div id="roomModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Room Created</h3>
+                <p>Room ID: <span id="roomIdDisplay"></span></p>
+                <button id="shareToMail">Share to Mail</button>
+                <div id="emailForm" style="display: none; margin-top: 10px;">
+                    <input type="email" id="emailInput" placeholder="Enter recipient email" />
+                    <button id="sendMailButton">Send Mail</button>
+                </div>
+                <button id="closeModal" style="margin-top: 15px;">OK</button>
+            </div>
+        </div>
+        
     </main>
 
     <script>
-        const peer = new Peer(); // Initialize PeerJS
+        const peer = new Peer(); 
         let localStream = null;
         let remoteStream = null;
         let currentCall = null;
@@ -279,8 +409,8 @@
             })
             .catch((err) => console.error('Failed to get local stream', err));
 
-        
-// {% comment %} mail call feature {% endcomment %}
+       
+// {% comment %} mail call feature {% endcomment %} 
 
 createRoomButton.addEventListener('click', () => {
         const roomId = peer.id;
@@ -305,6 +435,7 @@ createRoomButton.addEventListener('click', () => {
 
         // Close the modal on "OK" button click
         closeModalButton.addEventListener('click', () => {
+
             roomModal.style.display = 'none';
         });
 
@@ -355,7 +486,7 @@ createRoomButton.addEventListener('click', () => {
             const call = peer.call(roomId, localStream);
             handleCall(call);
         });
-
+ 
         // Listen for incoming connections
         peer.on('connection', (conn) => {
             dataConnection = conn;
@@ -477,7 +608,7 @@ createRoomButton.addEventListener('click', () => {
                     }
                 };
             } catch (err) {
-                console.error('Failed to share screen', err);
+                console.error('Failed to share the screen', err);
             }
         });
 

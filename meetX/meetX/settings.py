@@ -29,10 +29,13 @@ ALLOWED_HOSTS = [
 '17a5-103-157-104-107.ngrok-free.app',
 '7d78-103-157-104-107.ngrok-free.app',
 '127.0.0.1',
- 'https://f4b4-103-157-104-107.ngrok-free.app',
+'https://b2a3-117-251-16-178.ngrok-free.app',
+'f4b4-103-157-104-107.ngrok-free.app',
+'86a2-103-157-104-107.ngrok-free.app',
+
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'https://f4b4-103-157-104-107.ngrok-free.app',
+  'https://b2a3-117-251-16-178.ngrok-free.app',
 ]
 
 
@@ -165,8 +168,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # or any other SMTP server you're using
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'vigneshchinthakuntla4666@gmail.com'  # replace with your email
-EMAIL_HOST_PASSWORD = 'wecq odqy ztzt ltca'  # replace with your app password
+EMAIL_HOST_USER = 'vignesh.c@webandcrafts.in'  # replace with your email
+EMAIL_HOST_PASSWORD = 'codv ygsg haoq rvum'  # replace with your app password
 
 LOGIN_REDIRECT_URL = 'video_chat'
 LOGOUT_REDIRECT_URL = 'login'
+    

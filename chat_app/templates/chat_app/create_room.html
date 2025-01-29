@@ -1,0 +1,19 @@
+<!-- webrtc_app/templates/webrtc_app/create_room.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Room and Send Link</title>
+</head>
+<body>
+    <h1>Create a Room</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="email">Enter Emails (comma-separated):</label><br>
+        <textarea id="email" name="email" rows="4" cols="50" placeholder="email1@example.com, email2@example.com" required></textarea><br><br>
+        <button type="submit">Send to Emails</button>
+    </form>
+</body>
+</html>

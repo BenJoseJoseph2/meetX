@@ -2,7 +2,6 @@
 # Create your views here.
 # views.py
 from django.shortcuts import render, redirect
-from chat_app.views import *
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

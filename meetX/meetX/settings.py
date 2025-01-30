@@ -29,13 +29,16 @@ ALLOWED_HOSTS = [
 '17a5-103-157-104-107.ngrok-free.app',
 '7d78-103-157-104-107.ngrok-free.app',
 '127.0.0.1',
-'https://b2a3-117-251-16-178.ngrok-free.app',
+'https://3c2b-103-157-104-107.ngrok-free.app',
 'f4b4-103-157-104-107.ngrok-free.app',
 '86a2-103-157-104-107.ngrok-free.app',
+'1d38-103-157-104-107.ngrok-free.app',
+'3c2b-103-157-104-107.ngrok-free.app'
+
 
 ]
 CSRF_TRUSTED_ORIGINS = [
-  'https://b2a3-117-251-16-178.ngrok-free.app',
+  'https://3c2b-103-157-104-107.ngrok-free.app',
 ]
 
 
@@ -51,7 +54,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'video_app',
-    'chat_app',
 ]
 
 MIDDLEWARE = [

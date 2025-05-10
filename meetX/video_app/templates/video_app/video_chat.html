@@ -1,0 +1,743 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MEETX - Video Conferencing</title>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        /* Existing styles remain unchanged */
+        /* Add the following new styles */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #282c34;
+            color: white;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #1c1c1e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #2a9d8f;
+        }           
+
+        main {
+            display: flex;
+            flex-direction: row;
+            height: calc(100vh - 60px);
+        }
+
+        #videoSection {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: #333;
+        }
+
+        #videoSection video {
+            width: 350px;
+            height: 200px;
+            border: 3px solid #444;
+            border-radius: 10px;
+            background-color: black;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #controls button {
+            padding: 10px 15px;
+            font-size: 14px;
+            color: white;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #controls button:hover {
+            background-color: #21867a;
+        }
+
+        #sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #1c1c1e;
+            border-left: 2px solid #444;
+        }
+
+        #roomActions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #roomActions input {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #282c34;
+            color: white;
+        }
+
+        #roomActions button {
+            padding: 10px 15px;
+            font-size: 14px;
+            color: white;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #roomActions button:hover {
+            background-color: #21867a;
+        }
+
+        #chatSection {
+            flex: 1;
+            overflow-y: auto;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #chatSection div {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .sent {
+            background-color: #2a9d8f;
+            text-align: right;
+        }
+
+        .received {
+            background-color: #e76f51;
+            text-align: left;
+        }
+
+        #fileSection {
+            margin-top: 10px;
+        }
+
+        #fileSection input,
+        #fileSection button {
+            margin: 5px 0;
+        }
+
+        .controlButton {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: white;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        .controlButton:hover {
+            background-color: #21867a;
+        }
+    
+        /* Video Section Styling */
+        #videoContainer {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+    
+        #videoSection video {
+            width: 350px;
+            height: 200px;
+            border: 3px solid #444;
+            border-radius: 10px;
+            background-color: black;
+        }
+    
+        #videoControls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+    
+        /* Chat Section Styling */
+        #chatSection {
+            background-color: #1c1c1e;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+        }
+    
+        #messages div {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            color: white;
+        }
+    
+        .sent {
+            background-color: #2a9d8f;
+            text-align: right;
+        }
+    
+        .received {
+            background-color: #e76f51;
+            text-align: left;
+        }
+    
+        #chatInput {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+   
+            /* File Sharing Section */
+            #fileSection {
+                margin-top: 20px;
+                background-color: #1c1c1e;
+                border: 2px solid #444;
+                border-radius: 10px;
+                padding: 15px;
+            }
+        
+            #fileSection h3 {
+                margin-bottom: 10px;
+                color: #2a9d8f;
+            }
+        
+            #fileSection input[type="file"] {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                color: white;
+                background-color: #282c34;
+                border: 1px solid #444;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+        
+            #fileSection input[type="file"]:hover {
+                background-color: #333;
+            }
+        
+            #fileSection button {
+                padding: 10px;
+                font-size: 14px;
+                color: white;
+                background-color: #2a9d8f;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+        
+            #fileSection button:hover {
+                background-color: #21867a;
+            }
+        
+            /* Adjusting alignment for content */
+            #fileSection div {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        
+            .modal-content {
+                background: #363535;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+            }
+        
+            #emailForm {
+                margin-top: 10px;
+            }
+        
+            input[type="email"] {
+                width: 80%;
+                padding: 5px;
+                margin-bottom: 10px;
+            }
+        #videoContainer {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        #videoContainer.single-video {
+            justify-content: center;
+            
+        }
+
+        #videoContainer.dual-video {
+            justify-content: space-between;
+        }
+
+        #localVideo {
+            width: 100%;
+            height: 100%;
+            border: 3px solid #444;
+            border-radius: 10px;
+            background-color: black;
+        }
+
+        #remoteVideo {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #444; 
+            border-radius: 10px;
+            background-color: black;
+        }
+
+        #videoContainer.dual-video #localVideo {
+            width: 10%;
+            height: auto;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        #videoContainer.dual-video #remoteVideo {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin-top: 45px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MEETX</h1>
+        <div id="headerControls" style="display: flex; gap: 10px;">
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="background-color:rgb(66, 190, 132);height:30px;border-radius:50px;width:80px">Logout</button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+        <section id="videoSection">
+            <div id="videoContainer" class="single-video">
+                <video id="localVideo" autoplay  ></video>
+                <video id="remoteVideo" autoplay muted></video>
+            </div>
+            <div id="videoControls" style="margin-top: 20px; display: flex; gap: 15px;">
+                <button class="controlButton" id="toggleCamera">Toggle Camera</button>
+                <button class="controlButton" id="toggleMic">Toggle Mic</button>
+                <button class="controlButton" id="startScreenShare">Share Screen</button>
+            </div>
+        </section>
+
+        <aside id="sidebar">
+            <div id="roomActions">
+                <h3>Room Actions</h3>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                    <button id="createRoom">Create Room</button>
+                    <input id="roomInput" type="text" placeholder="Enter Room ID" />
+                    <button id="joinRoom">Join Room</button>
+                </div>
+            </div>
+        
+
+            <div id="chatSection">
+                <h3 style="text-align: center; color: #2a9d8f;">Chat</h3>
+                <div id="messages" style="height: 300px; overflow-y: auto; background-color: #222; border-radius: 8px; padding: 10px; border: 1px solid #444;">
+                    
+            </div>
+                <div style="display: flex; margin-top: 10px; gap: 10px;">
+                    <input id="chatInput" type="text" placeholder="Type a message..." style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background-color: #282c34; color: white;" />
+                    <button id="sendMessage" class="controlButton">Send</button>
+                </div>
+            </div>
+            
+            <div id="fileSection">
+                <h3 style="text-align: center; color: #2a9d8f;">File Sharing</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; background-color: #222; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                    <input type="file" id="fileInput" style="background-color: #282c34; color: white; padding: 10px; border-radius: 5px; border: 1px solid #444;" />
+                    <button id="sendFile" class="controlButton" style="width: 100%;">Send File</button>
+                </div>
+            </div>
+            
+        </aside>
+
+        <div id="roomModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Room Created</h3>
+                <p>Room ID: <span id="roomIdDisplay"></span></p>
+                <button id="shareToMail">Share to Mail</button>
+                <div id="emailForm" style="display: none; margin-top: 10px;">
+                    <input type="email" id="emailInput" placeholder="Enter recipient email" />
+                    <button id="sendMailButton">Send Mail</button>
+                </div>
+                <button id="closeModal" style="margin-top: 15px;">OK</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        const peer = new Peer();
+        let localStream = null;
+        let peers = {};
+        let dataConnections = [];
+        let screenStream = null;
+        let currentRoomId = null;
+
+        // DOM Elements
+        const videoContainer = document.getElementById('videoContainer');
+        const localVideo = document.getElementById('localVideo');
+        const toggleCameraButton = document.getElementById('toggleCamera');
+        const toggleMicButton = document.getElementById('toggleMic');
+        const startScreenShareButton = document.getElementById('startScreenShare');
+        const createRoomButton = document.getElementById('createRoom');
+        const joinRoomButton = document.getElementById('joinRoom');
+        const roomInput = document.getElementById('roomInput');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageButton = document.getElementById('sendMessage');
+        const messagesDiv = document.getElementById('messages');
+        const fileInput = document.getElementById('fileInput');
+        const sendFileButton = document.getElementById('sendFile');
+
+        // Media States
+        let isCameraOn = true;
+        let isMicOn = true;
+
+        // Initialize local media
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                localStream = stream;
+                localVideo.srcObject = stream;
+            })
+            .catch(error => console.error('Error accessing media devices:', error));
+
+        // Room Creation
+        createRoomButton.addEventListener('click', () => {
+            currentRoomId = peer.id;
+            showRoomModal(currentRoomId);
+        });
+
+        // Room Joining
+        joinRoomButton.addEventListener('click', () => {
+            const roomId = roomInput.value.trim();
+            if (!roomId) return alert('Please enter a Room ID');
+            
+            currentRoomId = roomId;
+            const conn = peer.connect(roomId);
+            setupDataConnection(conn);
+            
+            conn.on('open', () => {
+                conn.send({ type: 'request-peer-list' });
+            });
+
+            const call = peer.call(roomId, localStream);
+            handleCall(call);
+        });
+
+        createRoomButton.addEventListener('click', () => {
+            const roomId = peer.id;
+            const roomModal = document.getElementById('roomModal');
+            const roomIdDisplay = document.getElementById('roomIdDisplay');
+            const emailForm = document.getElementById('emailForm');
+            const shareToMailButton = document.getElementById('shareToMail');
+            const closeModalButton = document.getElementById('closeModal');
+            const sendMailButton = document.getElementById('sendMailButton');
+            const emailInput = document.getElementById('emailInput');
+
+            // Set Room ID in the modal
+            roomIdDisplay.textContent = roomId;
+
+            // Show the modal
+            roomModal.style.display = 'flex';
+
+            // Show email input form when "Share to Mail" is clicked
+            shareToMailButton.addEventListener('click', () => {
+                emailForm.style.display = 'block';
+            });
+
+            // Close the modal on "OK" button click
+            closeModalButton.addEventListener('click', () => {
+                roomModal.style.display = 'none';
+            });
+
+            // Send email with Room ID
+            sendMailButton.addEventListener('click', () => {
+                const email = emailInput.value.trim();
+                if (email) {
+                    // Proceed with sending the email
+                    fetch('/send-room-email/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, roomId }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                alert('Room ID sent to email successfully!');
+                                emailForm.style.display = 'none'; // Hide the email form after sending
+                                emailInput.value = ''; // Clear the input field
+                            } else {
+                                alert('Failed to send email. Please try again.');
+                            }
+                        })
+                        .catch((error) => console.error('Error:', error));
+                } else {
+                    alert('Please enter an email address.');
+                }
+            });
+        });
+
+
+        // PeerJS Connection Handling
+        peer.on('connection', conn => {
+            setupDataConnection(conn);
+            
+            conn.on('data', data => {
+                if (data.type === 'request-peer-list') {
+                    conn.send({ 
+                        type: 'peer-list', 
+                        peers: Object.keys(peers) 
+                    });
+                }
+            });
+        });
+
+        peer.on('call', call => {
+            call.answer(localStream);
+            handleCall(call);
+        });
+
+        function handleCall(call) {
+            const peerId = call.peer;
+            
+            call.on('stream', stream => {
+                addVideoStream(peerId, stream);
+            });
+
+            call.on('close', () => {
+                removeVideoStream(peerId);
+            });
+
+            peers[peerId] = call;
+        }
+
+        function setupDataConnection(conn) {
+            dataConnections.push(conn);
+            
+            conn.on('data', data => {
+                switch(data.type) {
+                    case 'message':
+                        appendMessage(data.content, 'received');
+                        break;
+                    case 'file':
+                        receiveFile(data.file, data.filename);
+                        break;
+                    case 'peer-list':
+                        data.peers.forEach(connectToPeer);
+                        break;
+                }
+            });
+        }
+
+        function connectToPeer(peerId) {
+            if (peerId === peer.id || peers[peerId]) return;
+            
+            const conn = peer.connect(peerId);
+            setupDataConnection(conn);
+            
+            const call = peer.call(peerId, localStream);
+            handleCall(call);
+        }
+
+        // Video Stream Management
+        function addVideoStream(peerId, stream) {
+            if (document.getElementById(peerId)) return;
+            
+            const videoWrapper = document.createElement('div');
+            videoWrapper.className = 'video-wrapper';
+            videoWrapper.id = peerId;
+            
+            const video = document.createElement('video');
+            video.autoplay = true;
+            video.srcObject = stream;
+            
+            videoWrapper.appendChild(video);
+            videoContainer.appendChild(videoWrapper);
+        }
+
+        function removeVideoStream(peerId) {
+            const videoWrapper = document.getElementById(peerId);
+            if (videoWrapper) videoWrapper.remove();
+            delete peers[peerId];
+        }
+
+        // Chat Functionality
+        sendMessageButton.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            dataConnections.forEach(conn => {
+                conn.send({ type: 'message', content: message });
+            });
+            
+            appendMessage(message, 'sent');
+            chatInput.value = '';
+        });
+
+        function appendMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // File Sharing
+        sendFileButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = () => {
+                dataConnections.forEach(conn => {
+                    conn.send({
+                        type: 'file',
+                        file: reader.result,
+                        filename: file.name
+                    });
+                });                                                                                 
+                alert('File sent to all participants!');
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function receiveFile(fileData, filename) {
+            const blob = new Blob([fileData]);
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.textContent = `Download ${filename}`;
+            link.style.color = '#2a9d8f';
+            
+            messagesDiv.appendChild(link);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Device Controls
+        toggleCameraButton.addEventListener('click', () => {
+            const videoTrack = localStream.getVideoTracks()[0];
+            isCameraOn = !isCameraOn;
+            videoTrack.enabled = isCameraOn;
+            toggleCameraButton.textContent = isCameraOn ? 'Turn Camera Off' : 'Turn Camera On';
+        });
+
+        toggleMicButton.addEventListener('click', () => {
+            const audioTrack = localStream.getAudioTracks()[0];
+            isMicOn = !isMicOn;
+            audioTrack.enabled = isMicOn;
+            toggleMicButton.textContent = isMicOn ? 'Mute' : 'Unmute';
+        });
+
+        startScreenShareButton.addEventListener('click', async () => {
+            try {
+                screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const screenTrack = screenStream.getVideoTracks()[0];
+                
+                Object.values(peers).forEach(call => {
+                    const sender = call.peerConnection
+                        .getSenders()
+                        .find(s => s.track.kind === 'video');
+                    sender.replaceTrack(screenTrack);
+                });
+
+                screenTrack.onended = () => {
+                    const videoTrack = localStream.getVideoTracks()[0];
+                    Object.values(peers).forEach(call => {
+                        const sender = call.peerConnection
+                            .getSenders()
+                            .find(s => s.track.kind === 'video');
+                        sender.replaceTrack(videoTrack);
+                    });
+                };
+            } catch (error) {
+                console.error('Error sharing screen:', error);
+            }
+        });
+ 
+        
+         function showRoomModal(roomId) {
+            const modal = document.getElementById('roomModal');
+            document.getElementById('roomIdDisplay').textContent = roomId;
+            modal.style.display = 'flex';
+
+            document.getElementById('closeModal').addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            document.getElementById('shareToMail').addEventListener('click', () => {
+                document.getElementById('emailForm').style.display = 'block';
+            });
+
+            document.getElementById('sendMailButton').addEventListener('click', () => {
+                const email = document.getElementById('emailInput').value.trim();
+                if (email) {
+                    
+                    alert(`Room ID ${roomId} sent to ${email}`);
+                    document.getElementById('emailForm').style.display = 'none';
+                }
+            });
+        }   
+
+        // Cleanup on window close
+        window.addEventListener('beforeunload', () => {
+            peer.destroy();
+        });
+    </script>
+</body>
+</html>
